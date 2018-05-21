@@ -1,6 +1,6 @@
-package productregistrationrmi;
+package product.registration.rmi;
 
-import productregistrationrmi.model.Product;
+import product.registration.rmi.model.Product;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ProductService extends Remote {
     
-    public boolean add(Product product) throws RemoteException;
+    public Product add(Product product) throws RemoteException;
     
     public boolean alter(Product product) throws RemoteException;
     

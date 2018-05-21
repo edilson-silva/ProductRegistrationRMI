@@ -1,4 +1,4 @@
-package productregistrationrmi.connection;
+package product.registration.rmi.connection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
