@@ -17,15 +17,14 @@ import product.registration.rmi.model.Product;
 public class ProductDAO {
 
     private static Connection connection;
-    private static PreparedStatement statement;
 
     public Product add(Product product) throws RemoteException {
         try {
             connection = ConnectionManager.getConnection();
             String sql = "INSERT INTO product(name, description, price)"
                     + "VALUES(?,?,?);";
-
-            statement = connection.prepareStatement(sql);
+            
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, product.getName());
             statement.setString(2, product.getDescription());
             statement.setDouble(3, product.getPrice());
@@ -47,17 +46,17 @@ public class ProductDAO {
     public boolean alter(Product product) throws RemoteException {
         try {
             connection = ConnectionManager.getConnection();
-            String sql = "UPDATE product"
-                    + "SET name = ?, description = ?, price = ? WHERE id = ?";
+            String sql = "UPDATE product SET name = ?, description = ?, price = ? WHERE id = ?";
 
-            statement.setInt(1, product.getId());
-            statement.setString(2, product.getName());
-            statement.setString(3, product.getDescription());
-            statement.setDouble(4, product.getPrice());
-
-            return statement.execute();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, product.getName());
+            statement.setString(2, product.getDescription());
+            statement.setDouble(3, product.getPrice());
+            statement.setInt(4, product.getId());
+            
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "ALTER ERR > "+e.getMessage());
         }
         return false;
     }
@@ -67,11 +66,12 @@ public class ProductDAO {
             connection = ConnectionManager.getConnection();
             String sql = "DELETE FROM product WHERE id = ?";
 
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, productId);
 
-            return statement.execute();
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "REMOVE ERR > "+e.getMessage());
         }
         return false;
     }
@@ -84,6 +84,7 @@ public class ProductDAO {
             String sql = "SELECT name, description, price FROM product"
                     + "WHERE id = ?;";
 
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement = connection.prepareStatement(sql);
             statement.setInt(1, productId);
 
@@ -100,7 +101,7 @@ public class ProductDAO {
             connection.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "SELECT ERR > "+e.getMessage());
         }
 
         return product;
@@ -111,8 +112,9 @@ public class ProductDAO {
 
         try {
             connection = ConnectionManager.getConnection();
-            String sql = "SELECT id, name, description, price FROM product;";
+            String sql = "SELECT id, name, description, price FROM product ORDER BY id;";
 
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement = connection.prepareStatement(sql);
 
             ResultSet rs = statement.executeQuery();
@@ -130,7 +132,7 @@ public class ProductDAO {
             connection.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "SELECT ALL ERR > "+e.getMessage());
         }
 
         return products;
@@ -142,6 +144,7 @@ public class ProductDAO {
             connection = ConnectionManager.getConnection();
             String sql = "SELECT MAX(id) AS id FROM product;";
 
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement = connection.prepareStatement(sql);
 
             ResultSet rs = statement.executeQuery();
@@ -153,7 +156,7 @@ public class ProductDAO {
             connection.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "GET ID ERR > "+e.getMessage());
         }
 
         return id;

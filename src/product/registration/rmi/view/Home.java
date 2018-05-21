@@ -5,13 +5,12 @@
  */
 package product.registration.rmi.view;
 
+import java.awt.HeadlessException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import product.registration.rmi.ProductService;
@@ -35,11 +34,7 @@ public class Home extends javax.swing.JFrame {
             service = (ProductService) Naming.lookup("rmi://" + ProjectMap.RMI_PROPERTY_IP + ":" + ProjectMap.RMI_PROPERTY_PORT + "/" + ProjectMap.RMI_SERVICE_NAME);
             model = (DefaultTableModel) productsTable.getModel();
             
-            List<Product> products = service.selectAll();
-            
-            for (Product product : products){
-                addToTable(product);
-            }
+            reloadTable();
             
         } catch (NotBoundException ex) {
             JOptionPane.showMessageDialog(null, "NotBoundException > "+ex.getMessage());
@@ -61,12 +56,12 @@ public class Home extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        productRegistrationLabel = new javax.swing.JLabel();
+        productNameLabel = new javax.swing.JLabel();
         productName = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
+        productDescriptionLabel = new javax.swing.JLabel();
         productPrice = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
+        productPriceLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         productDescription = new javax.swing.JTextArea();
         addButton = new javax.swing.JButton();
@@ -81,16 +76,16 @@ public class Home extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel2.setFont(new java.awt.Font("Dialog", 1, 36)); // NOI18N
-        jLabel2.setText("Product Registration");
-        jLabel2.setFocusable(false);
-        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        productRegistrationLabel.setFont(new java.awt.Font("Dialog", 1, 36)); // NOI18N
+        productRegistrationLabel.setText("Product Registration");
+        productRegistrationLabel.setFocusable(false);
+        productRegistrationLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jLabel6.setText("Name");
+        productNameLabel.setText("Name");
 
-        jLabel7.setText("Description");
+        productDescriptionLabel.setText("Description");
 
-        jLabel8.setText("price");
+        productPriceLabel.setText("price");
 
         productDescription.setColumns(20);
         productDescription.setRows(5);
@@ -140,6 +135,11 @@ public class Home extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        productsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                productsTableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(productsTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -154,13 +154,13 @@ public class Home extends javax.swing.JFrame {
                             .addComponent(jScrollPane2)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel8)
+                                    .addComponent(productNameLabel)
+                                    .addComponent(productPriceLabel)
                                     .addComponent(productName)
                                     .addComponent(productPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel7)
+                                    .addComponent(productDescriptionLabel)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -168,26 +168,26 @@ public class Home extends javax.swing.JFrame {
                                     .addComponent(alterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(removeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(productRegistrationLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(6, 6, 6)
-                .addComponent(jLabel2)
+                .addComponent(productRegistrationLabel)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7))
+                            .addComponent(productNameLabel)
+                            .addComponent(productDescriptionLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(productName, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel8)
+                                .addComponent(productPriceLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(productPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1)))
@@ -206,46 +206,125 @@ public class Home extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        String name = productName.getText();
-        String description = productDescription.getText();
-        double price = 0;
+        String name = productName.getText().trim();
+        String description = productDescription.getText().trim();
+        String price = productPrice.getText().trim();
         
-        if (name.trim().isEmpty() || description.trim().isEmpty()) {
+        if (name.isEmpty() || description.isEmpty() || price.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Fill in the fields.");
-        } else {
+        } else {            
             try {
+                double priceDouble = Double.parseDouble(price);
                 try {
-                    price = Double.parseDouble(productPrice.getText());
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Price invalid format!");
-                }
-                
-                Product product = new Product(name, description, price);
-                product = service.add(product);
-                
-                if (product != null) {
-                    addToTable(product);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Add Product Err!");
-                }
-                
-            } catch (RemoteException ex) {
-                JOptionPane.showMessageDialog(null, "RMI Err > "+ex.getMessage());
+                    Product product = new Product(name, description, priceDouble);
+                    product = service.add(product);
+
+                    if (product != null) {
+                        addToTable(product);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Add Product Err!");
+                    }
+
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(null, "RMI Err > "+ex.getMessage());
+                }   
+            } catch (HeadlessException | NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Price invalid format!");
             }
-            
         }
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void alterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterButtonActionPerformed
-        // TODO add your handling code here:
+        if (productsTable.getSelectedRow() == -1){
+            if (productsTable.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(null, "Table is empty!");
+            } else {
+                JOptionPane.showMessageDialog(null, "You must select a product!");
+            }
+        } else {
+            String name = productName.getText().trim();
+            String description = productDescription.getText().trim();
+            String price = productPrice.getText().trim();
+
+            if (name.isEmpty() || description.isEmpty() || price.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Fill in the fields.");
+            } else {            
+                try {
+                    double priceDouble = Double.parseDouble(price);
+                    try {
+                        int id = Integer.parseInt(model.getValueAt(productsTable.getSelectedRow(), 0).toString());
+
+                        Product product = new Product(id, name, description, priceDouble);
+
+                        if (service.alter(product)) {
+                            reloadTable();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Alter Product Err!");
+                        }
+
+                    } catch (RemoteException ex) {
+                        JOptionPane.showMessageDialog(null, "RMI Err > "+ex.getMessage());
+                    }   
+                } catch (HeadlessException | NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Price invalid format!");
+                }
+            }
+        }
     }//GEN-LAST:event_alterButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        // TODO add your handling code here:
+        if (productsTable.getSelectedRow() == -1){
+            if (productsTable.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(null, "Table is empty!");
+            } else {
+                JOptionPane.showMessageDialog(null, "You must select a product!");
+            }
+        } else {            
+            try {
+                double priceDouble = Double.parseDouble(model.getValueAt(productsTable.getSelectedRow(), 0).toString());
+                try {
+                    int id = Integer.parseInt(model.getValueAt(productsTable.getSelectedRow(), 0).toString());
+
+                    if (service.remmove(id)) {
+                        model.removeRow(productsTable.getSelectedRow());
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Remove Product Err!");
+                    }
+
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(null, "RMI Err > "+ex.getMessage());
+                }   
+            } catch (HeadlessException | NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Price invalid format!");
+            }
+        }
     }//GEN-LAST:event_removeButtonActionPerformed
 
+    private void productsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_productsTableMouseClicked
+        productName.setText(model.getValueAt(productsTable.getSelectedRow(), 1).toString());
+        productDescription.setText(model.getValueAt(productsTable.getSelectedRow(), 2).toString());
+        productPrice.setText(model.getValueAt(productsTable.getSelectedRow(), 3).toString());
+    }//GEN-LAST:event_productsTableMouseClicked
+
+    private void reloadTable() throws RemoteException {
+        model.getDataVector().removeAllElements();
+        
+        List<Product> products = service.selectAll();
+            
+        for (Product product : products){
+            addToTable(product);
+        }
+    }
+    
     private void addToTable(Product product){    
         model.addRow(new Object[]{product.getId(), product.getName(), product.getDescription(), product.getPrice()});
+        clear();
+    }
+    
+    private void clear(){
+        productName.setText("");
+        productDescription.setText("");
+        productPrice.setText("");
     }
     
     /**
@@ -288,16 +367,17 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JButton alterButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private static javax.swing.JTextArea productDescription;
+    private javax.swing.JLabel productDescriptionLabel;
     private static javax.swing.JTextField productName;
+    private javax.swing.JLabel productNameLabel;
     private static javax.swing.JTextField productPrice;
+    private javax.swing.JLabel productPriceLabel;
+    private javax.swing.JLabel productRegistrationLabel;
     private javax.swing.JTable productsTable;
     private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables
+
 }
